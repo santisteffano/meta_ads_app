@@ -27,9 +27,11 @@ function ctaLabel(cta: string) {
 export function AdPreview({
   variant,
   placement,
+  imageUrl,
 }: {
   variant: PreviewVariant;
   placement: Placement;
+  imageUrl?: string;
 }) {
   const isStories = placement === "stories";
 
@@ -60,10 +62,19 @@ export function AdPreview({
             isStories ? "h-[58%]" : "aspect-[4/5]"
           }`}
         >
-          <div className="absolute inset-0 bg-[#2a2a2a]" />
-          <div className="absolute inset-x-0 bottom-0 p-3">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageUrl}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[#2a2a2a]" />
+          )}
+          <div className="absolute inset-x-0 bottom-0 bg-[#1A1A1A]/70 p-3">
             <p className="text-[11px] uppercase tracking-[0.16em] text-[#F5F0E6]/70">
-              Foto de producto
+              {imageUrl ? "Lala's" : "Foto de producto"}
             </p>
             <p className="mt-1 font-serif text-lg leading-tight text-[#F5F0E6]">
               {variant.headline}

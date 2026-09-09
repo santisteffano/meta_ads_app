@@ -32,12 +32,20 @@ export default function HomePage() {
           Estudio de creatividades para Meta. Generás, revisás y copiás. Nada
           se publica solo: todo sale en pausa, cuando conectemos Ads Manager.
         </p>
-        <Link
-          href="/generate"
-          className="mt-8 inline-flex rounded-md bg-[#C41E3A] px-5 py-2.5 text-sm font-semibold text-white"
-        >
-          Generar copy
-        </Link>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/generate"
+            className="inline-flex rounded-md bg-[#C41E3A] px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            Generar copy
+          </Link>
+          <Link
+            href="/creatives"
+            className="inline-flex rounded-md border border-[#e4ddd0] bg-white px-5 py-2.5 text-sm font-semibold text-[#1A1A1A]"
+          >
+            Fotos y PNG
+          </Link>
+        </div>
 
         <div className="mt-12 grid gap-4 sm:grid-cols-3">
           {FUNNELS.map((funnel) => (

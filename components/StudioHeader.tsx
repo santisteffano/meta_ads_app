@@ -3,7 +3,7 @@ import Link from "next/link";
 const NAV = [
   { href: "/", label: "Inicio" },
   { href: "/generate", label: "Generar" },
-  { href: "/creatives", label: "Creatividades", disabled: true },
+  { href: "/creatives", label: "Creatividades" },
   { href: "/campaigns", label: "Campañas", disabled: true },
 ];
 

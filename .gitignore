@@ -39,6 +39,11 @@ yarn-error.log*
 /prisma/*.db-journal
 /prisma/dev.db
 
+# local photo library
+/data/assets.json
+/public/assets/*
+!/public/assets/.gitkeep
+
 # vercel
 .vercel
 

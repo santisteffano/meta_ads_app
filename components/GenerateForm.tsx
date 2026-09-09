@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AdPreview } from "@/components/AdPreview";
+import type { Asset } from "@/lib/assets";
 import {
   ANGLES,
   DESTINATIONS,
@@ -32,7 +34,7 @@ type ApiResponse = {
 const fieldClass =
   "mt-1 w-full rounded-md border border-[#e4ddd0] bg-white px-3 py-2 text-sm text-[#2D2D2D] outline-none focus:border-[#C41E3A]";
 
-export function GenerateForm() {
+export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
   const [audience, setAudience] = useState<AudienceId>("b2c");
   const [objective, setObjective] = useState<CopyBrief["objective"]>(
     "conversaciones",
@@ -51,6 +53,18 @@ export function GenerateForm() {
   const [result, setResult] = useState<ApiResponse | null>(null);
   const [selected, setSelected] = useState(0);
   const [placement, setPlacement] = useState<"feed" | "stories">("feed");
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [assetId, setAssetId] = useState(initialAssetId ?? "");
+
+  useEffect(() => {
+    fetch("/api/assets")
+      .then((response) => response.json())
+      .then((data: { assets: Asset[] }) => {
+        setAssets(data.assets);
+        if (!assetId && data.assets[0]) setAssetId(data.assets[0].id);
+      })
+      .catch(() => undefined);
+  }, []);
 
   const angles = useMemo(
     () =>
@@ -108,6 +122,11 @@ export function GenerateForm() {
   }
 
   const active = result?.variants[selected];
+  const productPhotos = assets.filter(
+    (asset) => asset.productId === productId || asset.productId === "marca",
+  );
+  const selectedAsset =
+    assets.find((asset) => asset.id === assetId) ?? productPhotos[0];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
@@ -252,6 +271,40 @@ export function GenerateForm() {
           />
         </label>
 
+        <div className="mt-4">
+          <p className="text-sm font-medium">Foto real</p>
+          {productPhotos.length ? (
+            <div className="mt-2 flex gap-2 overflow-x-auto">
+              {productPhotos.map((asset) => (
+                <button
+                  key={asset.id}
+                  type="button"
+                  onClick={() => setAssetId(asset.id)}
+                  className={`h-14 w-14 shrink-0 overflow-hidden rounded-md border ${
+                    selectedAsset?.id === asset.id
+                      ? "border-[#C41E3A]"
+                      : "border-[#e4ddd0]"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={asset.url}
+                    alt={asset.alt}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-xs text-[#7a7268]">
+              No hay foto de este producto.{" "}
+              <Link href="/creatives" className="underline">
+                Cargar en Creatividades
+              </Link>
+            </p>
+          )}
+        </div>
+
         {error ? (
           <p className="mt-4 text-sm text-[#C41E3A]">{error}</p>
         ) : null}
@@ -358,7 +411,11 @@ export function GenerateForm() {
 
               {active ? (
                 <div className="space-y-3">
-                  <AdPreview variant={active} placement={placement} />
+                  <AdPreview
+                    variant={active}
+                    placement={placement}
+                    imageUrl={selectedAsset?.url}
+                  />
                   <button
                     type="button"
                     className="w-full rounded-md border border-[#e4ddd0] bg-white px-3 py-2 text-sm"
@@ -376,6 +433,14 @@ export function GenerateForm() {
                   >
                     Copiar variante
                   </button>
+                  {selectedAsset ? (
+                    <Link
+                      href={`/creatives?asset=${selectedAsset.id}&headline=${encodeURIComponent(active.headline)}`}
+                      className="block w-full rounded-md border border-[#e4ddd0] bg-white px-3 py-2 text-center text-sm"
+                    >
+                      Recortar y exportar PNG
+                    </Link>
+                  ) : null}
                 </div>
               ) : null}
             </div>
