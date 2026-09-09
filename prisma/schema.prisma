@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Generation {
+  id          String     @id @default(cuid())
+  objective   String
+  audience    String
+  productId   String
+  angleId     String
+  destination String
+  formats     String
+  extraNotes  String?
+  source      String
+  createdAt   DateTime   @default(now())
+  creatives   Creative[]
+}
+
+model Creative {
+  id           String     @id @default(cuid())
+  generationId String
+  generation   Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  primaryText  String
+  headline     String
+  description  String
+  cta          String
+  landingUrl   String
+  status       String     @default("draft")
+  qaJson       String
+  createdAt    DateTime   @default(now())
+}
