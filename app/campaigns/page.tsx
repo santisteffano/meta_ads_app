@@ -1,29 +1,23 @@
-import { GenerateForm } from "@/components/GenerateForm";
+import { CampaignsList } from "@/components/CampaignsList";
 import { StudioHeader } from "@/components/StudioHeader";
 
-export default async function GeneratePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ asset?: string }>;
-}) {
-  const { asset } = await searchParams;
-
+export default function CampaignsPage() {
   return (
     <div className="min-h-full bg-[#F5F0E6]">
-      <StudioHeader current="/generate" />
+      <StudioHeader current="/campaigns" />
       <main className="mx-auto max-w-6xl px-4 py-8">
         <p className="text-[11px] uppercase tracking-[0.16em] text-[#C41E3A]">
-          Copy + foto
+          Insights
         </p>
         <h1 className="mt-2 font-serif text-3xl text-[#1A1A1A] sm:text-4xl">
-          Generar anuncios
+          Campañas
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[#5c564e]">
-          Generá, aprobá y exportá. B2C apunta a la zona de envío; el resto,
-          a Uruguay. Todo sale en pausa.
+          Historial del studio y un vistazo de Ads Manager (7 días). Los
+          anuncios creados acá siguen en pausa hasta que los prendas.
         </p>
         <div className="mt-8">
-          <GenerateForm initialAssetId={asset} />
+          <CampaignsList />
         </div>
       </main>
     </div>

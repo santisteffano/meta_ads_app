@@ -13,7 +13,7 @@ export default async function CreativesPage({
       <StudioHeader current="/creatives" />
       <main className="mx-auto max-w-6xl px-4 py-8">
         <p className="text-[11px] uppercase tracking-[0.16em] text-[#C41E3A]">
-          Sprint 2 · Fotos reales
+          Fotos reales
         </p>
         <h1 className="mt-2 font-serif text-3xl text-[#1A1A1A] sm:text-4xl">
           Creatividades

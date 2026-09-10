@@ -17,6 +17,13 @@ const FUNNELS = [
   },
 ];
 
+const STEPS = [
+  { n: "01", title: "Copy", body: "Brief + variantes con QA de claims." },
+  { n: "02", title: "Foto", body: "Foto real, overlay y recorte 1:1 / 4:5 / 9:16." },
+  { n: "03", title: "Aprobar", body: "Human in the loop. Nada se publica solo." },
+  { n: "04", title: "Pausa", body: "ZIP para Ads Manager o crear en Meta, siempre PAUSED." },
+];
+
 export default function HomePage() {
   return (
     <div className="min-h-full bg-[#F5F0E6]">
@@ -29,8 +36,8 @@ export default function HomePage() {
           {LALAS_BRAND.tagline}
         </h1>
         <p className="mt-4 max-w-xl text-[#5c564e]">
-          Estudio de creatividades para Meta. Generás, revisás y copiás. Nada
-          se publica solo: todo sale en pausa, cuando conectemos Ads Manager.
+          Estudio de creatividades para Meta. Generás, aprobás y exportás.
+          Nada se publica solo: todo sale en pausa.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
@@ -45,9 +52,28 @@ export default function HomePage() {
           >
             Fotos y PNG
           </Link>
+          <Link
+            href="/settings"
+            className="inline-flex rounded-md border border-[#e4ddd0] bg-white px-5 py-2.5 text-sm font-semibold text-[#1A1A1A]"
+          >
+            Conectar Meta
+          </Link>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+        <div className="mt-12 grid gap-3 sm:grid-cols-4">
+          {STEPS.map((step) => (
+            <article
+              key={step.n}
+              className="rounded-2xl border border-[#e4ddd0] bg-white/70 p-4"
+            >
+              <p className="text-[11px] tracking-[0.14em] text-[#C41E3A]">{step.n}</p>
+              <h2 className="mt-1 font-serif text-lg text-[#1A1A1A]">{step.title}</h2>
+              <p className="mt-1 text-sm text-[#5c564e]">{step.body}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
           {FUNNELS.map((funnel) => (
             <article
               key={funnel.title}

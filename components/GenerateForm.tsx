@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AdPreview } from "@/components/AdPreview";
+import { ExportPack } from "@/components/ExportPack";
 import type { Asset } from "@/lib/assets";
 import {
   ANGLES,
@@ -55,6 +56,10 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
   const [placement, setPlacement] = useState<"feed" | "stories">("feed");
   const [assets, setAssets] = useState<Asset[]>([]);
   const [assetId, setAssetId] = useState(initialAssetId ?? "");
+  const [brief, setBrief] = useState<CopyBrief | null>(null);
+  const [status, setStatus] = useState<Record<number, "approved" | "rejected">>(
+    {},
+  );
 
   useEffect(() => {
     fetch("/api/assets")
@@ -103,7 +108,16 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
         throw new Error(data.error ?? "No se pudo generar el copy");
       }
       setResult(data);
+      setBrief(brief);
       setSelected(0);
+      setStatus(
+        Object.fromEntries(
+          data.variants.map((variant, index) => [
+            index,
+            variant.qa.ok ? "approved" : "rejected",
+          ]),
+        ) as Record<number, "approved" | "rejected">,
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
@@ -122,11 +136,15 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
   }
 
   const active = result?.variants[selected];
+  const approvedVariants =
+    result?.variants
+      .map((variant, index) => ({ ...variant, index }))
+      .filter((variant) => status[variant.index] === "approved") ?? [];
   const productPhotos = assets.filter(
     (asset) => asset.productId === productId || asset.productId === "marca",
   );
   const selectedAsset =
-    assets.find((asset) => asset.id === assetId) ?? productPhotos[0];
+    productPhotos.find((asset) => asset.id === assetId) ?? productPhotos[0];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
@@ -136,7 +154,7 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
       >
         <h2 className="font-serif text-xl text-[#1A1A1A]">Brief</h2>
         <p className="mt-1 text-sm text-[#7a7268]">
-          Cinco variantes on-brand, con QA de claims y caracteres.
+          Variantes on-brand, con QA de claims y caracteres.
         </p>
 
         <label className="mt-5 block text-sm font-medium">
@@ -181,7 +199,10 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
           <select
             className={fieldClass}
             value={productId}
-            onChange={(event) => setProductId(event.target.value)}
+            onChange={(event) => {
+              setProductId(event.target.value);
+              setAssetId("");
+            }}
           >
             <option value="marca">Marca general</option>
             {LALAS_BRAND.products.map((product) => (
@@ -326,6 +347,13 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
           </div>
         ) : (
           <div className="space-y-5">
+            {brief ? (
+              <ExportPack
+                brief={brief}
+                variants={approvedVariants}
+                imageUrl={selectedAsset?.url}
+              />
+            ) : null}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-[#7a7268]">
                 Fuente:{" "}
@@ -363,9 +391,16 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
               <ul className="space-y-3">
                 {result.variants.map((variant, index) => (
                   <li key={`${variant.headline}-${index}`}>
-                    <button
-                      type="button"
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelected(index)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSelected(index);
+                        }
+                      }}
                       className={`w-full rounded-xl border p-4 text-left ${
                         selected === index
                           ? "border-[#C41E3A] bg-white"
@@ -404,7 +439,43 @@ export function GenerateForm({ initialAssetId }: { initialAssetId?: string }) {
                           ))}
                         </ul>
                       ) : null}
-                    </button>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setStatus((current) => ({
+                              ...current,
+                              [index]: "approved",
+                            }));
+                          }}
+                          className={`rounded-full px-2 py-0.5 text-[11px] ${
+                            status[index] === "approved"
+                              ? "bg-[#e8f3ea] text-[#1f6b34]"
+                              : "bg-[#F5F0E6] text-[#7a7268]"
+                          }`}
+                        >
+                          Aprobar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setStatus((current) => ({
+                              ...current,
+                              [index]: "rejected",
+                            }));
+                          }}
+                          className={`rounded-full px-2 py-0.5 text-[11px] ${
+                            status[index] === "rejected"
+                              ? "bg-[#fde8e8] text-[#C41E3A]"
+                              : "bg-[#F5F0E6] text-[#7a7268]"
+                          }`}
+                        >
+                          Descartar
+                        </button>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>

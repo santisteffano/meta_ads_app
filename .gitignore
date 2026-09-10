@@ -39,8 +39,10 @@ yarn-error.log*
 /prisma/*.db-journal
 /prisma/dev.db
 
-# local photo library
+# local photo library + Meta secrets
 /data/assets.json
+/data/meta-config.json
+/data/meta-publishes.json
 /public/assets/*
 !/public/assets/.gitkeep
 
