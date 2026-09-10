@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StudioFooter } from "@/components/StudioFooter";
 import { StudioHeader } from "@/components/StudioHeader";
 import { LALAS_BRAND } from "@/lib/brand";
 
@@ -26,7 +27,7 @@ const STEPS = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-full bg-[#F5F0E6]">
+    <div className="flex min-h-full flex-col bg-[#F5F0E6]">
       <StudioHeader current="/" />
       <main className="mx-auto max-w-6xl px-4 py-12">
         <p className="text-[11px] uppercase tracking-[0.16em] text-[#C41E3A]">
@@ -85,6 +86,7 @@ export default function HomePage() {
           ))}
         </div>
       </main>
+      <StudioFooter />
     </div>
   );
 }

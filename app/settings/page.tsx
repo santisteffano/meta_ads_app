@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { SettingsForm } from "@/components/SettingsForm";
+import { StudioFooter } from "@/components/StudioFooter";
 import { StudioHeader } from "@/components/StudioHeader";
 
 export default function SettingsPage() {
   return (
-    <div className="min-h-full bg-[#F5F0E6]">
+    <div className="flex min-h-full flex-col bg-[#F5F0E6]">
       <StudioHeader current="/settings" />
       <main className="mx-auto max-w-6xl px-4 py-8">
         <p className="text-[11px] uppercase tracking-[0.16em] text-[#C41E3A]">
@@ -19,7 +21,15 @@ export default function SettingsPage() {
         <div className="mt-8">
           <SettingsForm />
         </div>
+        <p className="mt-6 text-sm text-[#7a7268]">
+          Meta pide una URL pública. Está en{" "}
+          <Link href="/privacy" className="underline">
+            /privacy
+          </Link>
+          .
+        </p>
       </main>
+      <StudioFooter />
     </div>
   );
 }
